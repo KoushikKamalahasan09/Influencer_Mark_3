@@ -1,8 +1,9 @@
 from werkzeug.security import generate_password_hash
 from main import app
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Integer, String, CheckConstraint
+from sqlalchemy import Column, Integer, String, Text, Float, Enum, ForeignKey, DateTime
 from datetime import datetime
+
 db = SQLAlchemy(app)
 
 # models
@@ -14,7 +15,6 @@ class User(db.Model):
     name = db.Column(db.String(150), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
-    
 
 class InfluencerProfile(db.Model):
     profile_id = db.Column(db.Integer, primary_key=True)
@@ -49,12 +49,11 @@ class CampaignInfluencer(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.now())
     updated_at = db.Column(db.DateTime, default=datetime.now(), onupdate=datetime.now())
 
-
 with app.app_context():
     db.create_all()
     admin = User.query.filter_by(type='Admin').first()
     if not admin:
-        passhash=generate_password_hash('admin')
-        admin = User(username='admin', passhash=passhash, type='Admin',name='Admin')
+        passhash = generate_password_hash('admin')
+        admin = User(username='admin', passhash=passhash, type='Admin', name='Admin')
         db.session.add(admin)
         db.session.commit()
